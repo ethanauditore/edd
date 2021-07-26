@@ -27,7 +27,7 @@ public class MonticuloArreglo<T extends ComparableIndexable<T>>
      *                  montículo.
      */
     public MonticuloArreglo(Coleccion<T> coleccion) {
-        // Aquí va su código.
+        this(coleccion, coleccion.getElementos());
     }
 
     /**
@@ -37,7 +37,13 @@ public class MonticuloArreglo<T extends ComparableIndexable<T>>
      * @param n el número de elementos en el iterable.
      */
     public MonticuloArreglo(Iterable<T> iterable, int n) {
-        // Aquí va su código.
+        arreglo = nuevoArreglo(n);
+        int i = 0;
+        for (T t : iterable) {
+            arreglo[i] = t;
+            t.setIndice(i++);
+        }
+        elementos = n;
     }
 
     /**
@@ -46,7 +52,21 @@ public class MonticuloArreglo<T extends ComparableIndexable<T>>
      * @throws IllegalStateException si el montículo es vacío.
      */
     @Override public T elimina() {
-        // Aquí va su código.
+        if (elementos == 0)
+            throw new IllegalStateException();
+        T t = arreglo[0];
+        for (int i = 0; i < arreglo.length; i++) {
+            if (t == null)
+                t = arreglo[i];
+            else if (arreglo[i] != null) {
+                if (t.compareTo(arreglo[i]) > 0)
+                    t = arreglo[i];
+            }
+        }
+        arreglo[t.getIndice()] = null;
+        t.setIndice(-1);
+        elementos--;
+        return t;
     }
 
     /**
@@ -57,7 +77,9 @@ public class MonticuloArreglo<T extends ComparableIndexable<T>>
      *         que el número de elementos.
      */
     @Override public T get(int i) {
-        // Aquí va su código.
+        if (i < 0 || i >= arreglo.length)
+            throw new NoSuchElementException();
+        return arreglo[i];
     }
 
     /**
@@ -66,7 +88,7 @@ public class MonticuloArreglo<T extends ComparableIndexable<T>>
      *         <code>false</code> en otro caso.
      */
     @Override public boolean esVacia() {
-        // Aquí va su código.
+        return elementos == 0;
     }
 
     /**
@@ -74,6 +96,6 @@ public class MonticuloArreglo<T extends ComparableIndexable<T>>
      * @return el número de elementos en el montículo.
      */
     @Override public int getElementos() {
-        // Aquí va su código.
+        return elementos;
     }
 }

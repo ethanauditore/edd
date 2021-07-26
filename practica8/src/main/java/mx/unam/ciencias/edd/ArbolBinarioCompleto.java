@@ -1,6 +1,7 @@
 package mx.unam.ciencias.edd;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * <p>Clase para árboles binarios completos.</p>
@@ -18,17 +19,24 @@ public class ArbolBinarioCompleto<T> extends ArbolBinario<T> {
 
         /* Inicializa al iterador. */
         private Iterador() {
-            // Aquí va su código.
+            cola = new Cola<Vertice>();
+            if (raiz != null)
+                cola.mete(raiz);
         }
 
         /* Nos dice si hay un elemento siguiente. */
         @Override public boolean hasNext() {
-            // Aquí va su código.
+            return !cola.esVacia();
         }
 
         /* Regresa el siguiente elemento en orden BFS. */
         @Override public T next() {
-            // Aquí va su código.
+            Vertice v = cola.saca();
+            if (v.izquierdo != null)
+                cola.mete(v.izquierdo);
+            if (v.derecho != null)
+                cola.mete(v.derecho);
+            return v.elemento;
         }
     }
 
@@ -56,7 +64,32 @@ public class ArbolBinarioCompleto<T> extends ArbolBinario<T> {
      *         <code>null</code>.
      */
     @Override public void agrega(T elemento) {
-        // Aquí va su código.
+        if (elemento == null)
+            throw new IllegalArgumentException();
+        Vertice v = nuevoVertice(elemento);
+        elementos++;
+        if (raiz == null)
+            raiz = v;
+        else {
+            Cola<Vertice> cola = new Cola<Vertice>();
+            cola.mete(raiz);
+            while(!cola.esVacia()) {
+                Vertice u = cola.saca();
+                if (u.izquierdo != null)
+                    cola.mete(u.izquierdo);
+                else {
+                    u.izquierdo = v;
+                    v.padre = u;
+                    return;
+                } if (u.derecho != null)
+                    cola.mete(u.derecho);
+                else {
+                    u.derecho = v;
+                    v.padre = u;
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -66,7 +99,30 @@ public class ArbolBinarioCompleto<T> extends ArbolBinario<T> {
      * @param elemento el elemento a eliminar.
      */
     @Override public void elimina(T elemento) {
-        // Aquí va su código.
+        Vertice v = vertice(busca(elemento));
+        if (v == null)
+            return;
+        elementos--;
+        if (elementos == 0)
+            raiz = null;
+        else {
+            Cola<Vertice> cola = new Cola<Vertice>();
+            cola.mete(raiz);
+            Vertice u = null;
+            while (!cola.esVacia()) {
+                u = cola.saca();
+                if (u.izquierdo != null)
+                    cola.mete(u.izquierdo);
+                if (u.derecho != null)
+                    cola.mete(u.derecho);
+            }
+            v.elemento = u.elemento;
+            Vertice p = u.padre;
+            if (p.izquierdo == u)
+                p.izquierdo = null;
+            else
+                p.derecho = null;
+        }
     }
 
     /**
@@ -75,7 +131,9 @@ public class ArbolBinarioCompleto<T> extends ArbolBinario<T> {
      * @return la altura del árbol.
      */
     @Override public int altura() {
-        // Aquí va su código.
+        if (elementos < 1)
+            return -1;
+        return 31 - Integer.numberOfLeadingZeros(elementos);
     }
 
     /**
@@ -84,7 +142,18 @@ public class ArbolBinarioCompleto<T> extends ArbolBinario<T> {
      * @param accion la acción a realizar en cada elemento del árbol.
      */
     public void bfs(AccionVerticeArbolBinario<T> accion) {
-        // Aquí va su código.
+        if (raiz == null)
+            return;
+        Cola<Vertice> cola = new Cola<Vertice>();
+        cola.mete(raiz);
+        while (!cola.esVacia()) {
+            Vertice v = cola.saca();
+            accion.actua(v);
+            if (v.izquierdo != null)
+                cola.mete(v.izquierdo);
+            if (v.derecho != null)
+                cola.mete(v.derecho);
+        }
     }
 
     /**
