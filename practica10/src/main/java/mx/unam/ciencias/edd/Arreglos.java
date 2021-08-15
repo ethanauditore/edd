@@ -18,7 +18,27 @@ public class Arreglos {
      */
     public static <T> void
     quickSort(T[] arreglo, Comparator<T> comparador) {
-        // Aquí va su código.
+        quickSort(arreglo, comparador, 0, arreglo.length - 1);
+    }
+
+    public static <T> void
+    quickSort(T[] A, Comparator<T> c, int a, int b) {
+        if (b <= a)
+            return;
+        int i = a + 1;
+        int j = b;
+        while (i < j)
+            if (c.compare(A[i], A[a]) > 0 && c.compare(A[j], A[a]) <= 0)
+                intercambia(A, i++, j--);
+            else if (c.compare(A[i], A[a]) <= 0)
+                i++;
+            else
+                j--;
+        if (c.compare(A[i], A[a]) > 0)
+            i--;
+        intercambia(A, a, i);
+        quickSort(A, c, a, i - 1);
+        quickSort(A, c, i + 1, b);
     }
 
     /**
@@ -39,7 +59,20 @@ public class Arreglos {
      */
     public static <T> void
     selectionSort(T[] arreglo, Comparator<T> comparador) {
-        // Aquí va su código.
+        for (int i = 0; i < arreglo.length - 1; i++) {
+            int m = i;
+            for (int j = i; j < arreglo.length; j++) {
+                if (comparador.compare(arreglo[j], arreglo[m]) < 0)
+                    m = j;
+            }
+            intercambia(arreglo, i, m);
+        }
+    }
+
+    public static <T> void intercambia(T[] arreglo, int a, int b) {
+        T t = arreglo[b];
+        arreglo[b] = arreglo[a];
+        arreglo[a] = t;
     }
 
     /**
@@ -63,7 +96,19 @@ public class Arreglos {
      */
     public static <T> int
     busquedaBinaria(T[] arreglo, T elemento, Comparator<T> comparador) {
-        // Aquí va su código.
+        return busquedaBinaria(arreglo, elemento, comparador, 0, arreglo.length - 1);
+    }
+
+    private static <T> int
+    busquedaBinaria(T[] arreglo, T elemento, Comparator<T> c, int a, int b) {
+        if (b < a)
+            return -1;
+        int m = a + ((b - a) / 2);
+        if (c.compare(elemento, arreglo[m]) == 0)
+            return m;
+        else if (c.compare(elemento, arreglo[m]) < 0)
+            return busquedaBinaria(arreglo, elemento, c, a, m - 1);
+        return busquedaBinaria(arreglo, elemento, c, m + 1, b);
     }
 
     /**
