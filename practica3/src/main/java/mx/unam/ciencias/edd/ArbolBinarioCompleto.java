@@ -70,25 +70,35 @@ public class ArbolBinarioCompleto<T> extends ArbolBinario<T> {
         if (raiz == null)
             raiz = v;
         else {
-            Cola<Vertice> cola = new Cola<Vertice>();
-            cola.mete(raiz);
-            while(!cola.esVacia()) {
-                Vertice u = cola.saca();
-                if (u.izquierdo != null)
-                    cola.mete(u.izquierdo);
-                else {
-                    u.izquierdo = v;
-                    v.padre = u;
-                    return;
-                } if (u.derecho != null)
-                    cola.mete(u.derecho);
-                else {
-                    u.derecho = v;
-                    v.padre = u;
-                    return;
-                }
-            }
+            int vy = altura();
+            int vx = elementos - (1 << vy);
+            Vertice p = getPadre(getRuta(vx, vy));
+            v.padre = p;
+            if (vx % 2 == 0)
+                p.izquierdo = v;
+            else
+                p.derecho = v;
         }
+    }
+
+    private Pila<Boolean> getRuta(int vx, int vy) {
+        Pila<Boolean> pila = new Pila<Boolean>();
+        for (int i = vy; i > 0; i--) {
+            pila.mete(vx % 2 == 0);
+            vx /= 2;
+        }
+        return pila;
+    }
+
+    private Vertice getPadre(Pila<Boolean> pila) {
+        Vertice v = raiz;
+        Boolean direccion = pila.saca();
+        while (!pila.esVacia()) {
+            // Si direccion == true nos vamos a la izquierda, sino a la derecha.
+            v = direccion ? v.izquierdo : v.derecho;
+            direccion = pila.saca();
+        }
+        return v;
     }
 
     /**
